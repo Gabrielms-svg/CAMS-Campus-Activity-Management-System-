@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body h1 {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700; /* Bold */
+}
+
+p {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 400; /* Regular */
+}
+
+       
+
+        /* 🔹 TOP BAR */
+        .top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #f8f8f8;
+            padding: 10px 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+
+        /* 🔹 Logo */
+        .top-bar .logo {
+            display: flex;
+            align-items: center;
+        }
+        .top-bar .logo img {
+            width: 40px;
+            margin-right: 10px;
+        }
+
+        /* 🔹 Search Bar */
+        .search-bar {
+            display: flex;
+            align-items: center;
+            border: 1px solid #ccc;
+            padding: 5px;
+            border-radius: 5px;
+            background: white;
+        }
+        .top-bar input {
+            border: none;
+            outline: none;
+            padding: 5px;
+        }
+
+        /* 🔹 ICONS CONTAINER */
+        .icons {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        /* 🔹 ICON STYLE */
+        .icon-container {
+            position: relative;
+            font-size: 20px;
+            padding: 8px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .icon-container:hover {
+            background: #e0e0e0;
+        }
+
+         /* 🔹 PROFILE DROPDOWN */
+         .profile-dropdown {
+        position: absolute;
+        background: white;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        border-radius: 5px;
+        width: 200px;
+        right: 0;
+        top: 40px;
+        display: none;
+        z-index: 1000;
+    }
+
+    .profile-dropdown div {
+        padding: 12px;
+        cursor: pointer;
+        border-bottom: 1px solid #ddd;
+        text-align: left;
+        font-size: 14px;
+    }
+
+    .profile-dropdown div:last-child {
+        border-bottom: none;
+    }
+
+    .profile-dropdown div:hover {
+        background: #f0f0f0;
+    }
+
+       
+        .container {
+            display: flex;
+            margin-top: 70px;
+            flex-wrap: nowrap;
+        }
+
+        
+        
+       
+
+        /* Icons Styling */
+        .menu-item i, .submenu i {
+            font-size: 18px;
+        }
+
+        .icons {
+            position: relative;
+            display: flex;
+            gap: 15px;
+            right: 30px;
+            align-items: center;
+        }
+
+        .dropdown {
+            position: absolute;
+            background: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+            display: none;
+            width: 200px;
+            right: 0;
+            top: 40px;
+        }
+
+        .dropdown div {
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        .dropdown div:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown div:hover {
+            background: #f0f0f0;
+        }
+
+        .icon-container {
+            position: relative;
+        }
+        .container {
+            display: flex;
+            margin-top: 70px;
+            flex-wrap: nowrap;
+        }
+
+        
+        
+        .dashboard {
+            display: flex;
+            gap: 15px; /* Increased gap for better spacing */
+            flex-wrap: wrap;
+            margin-top: 90px;
+
+            justify-content: space-between;
+            align-items: flex-start;
+            width: 100%; /* Ensures it spans full width */
+        }
+
+        .events {
+            flex: 1; /* Allows it to take up most space */
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            min-width: 850px; /* Ensures it’s not too small */
+            overflow: auto; /* Prevents content from getting cut off */
+        }
+
+        .right-section {
+            
+            flex: 1; /* Takes less space than `.events` */
+            min-width: 200px; /* Ensures it doesn't shrink too much */
+        }
+
+        .main {
+            flex: 1;
+            padding: 5px; /* Reduced padding for better fit */
+            margin-left: 250px; /* Adjust to match sidebar */
+            overflow: auto; /* Ensures scrolling if needed */
+            width: calc(100% - 250px); /* Adjusted width */
+        }
+        .sidebar {
+            width: 200px;
+            background: #2d2b2b;
+            color: white;
+            height: 100vh;
+            padding: 20px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 70px;
+            left: 0;
+        }
+        .content {
+            flex-grow: 1;
+            padding: 20px;
+            margin-left: 100px;
+        }
+        .profile {
+            text-align: center;
+            width: 50px;
+            height:50px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .profile img {
+            width: 70px;
+            border-radius: 90%;
+            border: 2px solid white;
+        }
+        
+        
+
+        .profile .verified {
+            position: absolute;
+            left: 20%;
+            bottom: -10px; /* Moves the tick below the image type - to + to change position */
+            transform: translateX(-50%);
+            background: blue;
+            color: white;
+            border-radius: 50%;
+            padding: 5px 7px;
+            font-size: 12px;
+        }
+
+
+        .menu-item {
+    display: flex;
+    align-items: center;
+    background: rgb(27, 15, 202);
+    padding: 10px;
+    margin-top: 10px;
+    width: 190px;
+    cursor: pointer;
+    border-radius: 7px;
+    transition: background 0.3s, transform 0.2s;
+}
+
+.menu-item i {
+    width: 25px;  /* Ensures all icons have the same width */
+    text-align: center;
+    margin-right: 10px; /* Adds spacing between icon and text */
+}
+
+
+        
+        
+        .menu-item.active {
+            background: #6a0dad;
+        }
+        .submenu {
+            display: none;
+            padding-left: 10px;
+            width: 180px;
+            background: #444;
+        }
+        .submenu div {
+            padding: 8px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s;
+        }
+        .submenu div:hover {
+            background: #908989;
+            transform: translateX(5px);
+        }
+        .menu-item:hover {
+            background: #8a2be2;
+            transform: scale(1.05);
+        }
+
+
+
+        .chart-container, .calendar-container {
+            background: rgb(255, 254, 254);
+            width: 250px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+
+
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .faculty-container {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .faculty-card {
+            background: #eee;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            padding: 8px;
+            border-radius: 10px;
+            width: 100px;
+            height: 140px;
+            text-align: center;
+        }
+        .see-more {
+            margin-top: 50px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+
+            background: #805ad5;
+            color: white;
+            padding: 5px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            
+
+        }
+        .calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            margin-top: 10px;
+        }
+        .calendar div {
+            padding: 7px;
+            background: #eee;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .calendar .today {
+            background: #805ad5;
+            color: white;
+        }
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+
+    </style>
+</head>
+<body>
+    <!--  TOP BAR -->
+    <div class="top-bar">
+        <div class="logo">
+            <img src="/image/logo.png" alt="Logo">
+            <h2>Nirmala</h2>
+        </div>
+        <div class="search-bar">
+            <input type="text" placeholder="Search">
+        </div>
+        <div class="icons">
+            <div class="icon-container" onclick="window.location.href='mailto:admin@example.com'">
+                <i class="fas fa-envelope"></i>
+            </div>
+            <div class="icon-container" id="notificationIcon">
+                <i class="fas fa-bell"></i>
+                <div class="dropdown" id="notificationDropdown">
+                    <div>No new notifications</div>
+                </div>
+            </div>
+            <div class="icon-container" id="profileIcon">
+                <i class="fas fa-user"></i>
+                <div class="profile-dropdown" id="profileDropdown">
+                    <div onclick="navigateTo('dashboard')"><i class="fas fa-tachometer-alt"></i> Dashboard</div>
+                    <div onclick="navigateTo('settings')"><i class="fas fa-cog"></i> Settings</div>
+                    <div onclick="navigateTo('logout')"><i class="fas fa-sign-out-alt"></i> Logout</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+ 
+
+  <div class="main">
+
+        <div class="dashboard">
+            <div class="events">
+                <h3>Analytic Dashboard</h3>
+                <table border="1" width="90%">
+                    <tr>
+                        <th>Students</th>
+                        <th>Course</th>
+                        <th>Event</th>
+                        <th>Category</th>
+                    </tr>
+                    <tr>
+                        <td>Bibin</td>
+                        <td>aaaa</td>
+                        <td>bbbbb</td>
+                        <td>cccc</td>
+                    </tr>
+                </table>
+                <h3>Faculty</h3>
+                <div class="faculty-container">
+                    <div class="faculty-card"><img src="faculty1.jpg" alt="Jobin"><br>Name: Jobin<br>Depart: Mech<br><button class="see-more">See More</button></div>
+                    <div class="faculty-card"><img src="faculty2.jpg" alt="Phalitta"><br>Name: Phalitta<br>Depart: CSE<br><button class="see-more">See More</button></div>
+                </div>
+            </div>
+            <div class="right-section">
+                <div class="chart-container">
+                    <h3>Latest Event</h3>
+                    <canvas id="myChart"></canvas>
+                </div>
+                <div class="calendar-container">
+                    <div class="calendar-header">
+                        <button onclick="prevMonth()">◀</button>
+                        <h3 id="month-year"></h3>
+                        <button onclick="nextMonth()">▶</button>
+                    </div>
+                    <div class="calendar" id="calendar"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+       <!--  SIDE BAR -->
+
+       <div class="container">
+        <div class="sidebar">
+            <div class="profile">
+                <img src="/image/admini.jpg" alt="Profile Picture">
+                <div class="profile-info">
+                    <div class="profile-name">
+                        <p>Henry</p>
+                    </div>
+                </div>
+                <span class="verified">✔</span>
+                <p>henryjhon@gmail.com</p>
+                <div class="menu-item" onclick="toggleMenu('dashboard', this)">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </div>
+        
+                <div class="menu-item" onclick="toggleMenu('faculty', this)">
+                    <i class="fas fa-chalkboard-teacher"></i> Faculty</div>
+                <div id="faculty" class="submenu">
+                    <div><i class="fas fa-user-plus"></i> Add Faculty</div>
+                    <div><i class="fas fa-user-edit"></i> Update OR Remove </div>
+                    <div><i class="fas fa-users"></i> View All Faculty</div>
+
+                </div>
+        
+                <div class="menu-item" onclick="toggleMenu('student', this)">
+                    <i class="fas fa-user-graduate"></i> Student
+                </div>
+                <div id="student" class="submenu">
+                    <div><i class="fas fa-user-lock"></i> Restrict or Remove</div>
+                    <div><i class="fas fa-users"></i> View All Students</div>
+                </div>
+        
+                <div class="menu-item" onclick="toggleMenu('event', this)">
+                    <i class="fas fa-calendar-alt"></i> Event
+                </div>
+
+
+                <!--submrnu html-->
+
+                <div id="event" class="submenu">
+                    <div><i class="fas fa-plus-circle"></i> Create Event</div>
+                    <div><i class="fas fa-edit"></i> Modify or Remove</div>
+                </div>
+        
+                <div class="menu-item" onclick="toggleMenu('settings', this)">
+                    <i class="fas fa-cog"></i> Settings
+                </div>
+        
+                <div class="menu-item" onclick="toggleMenu('logout', this)">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </div>
+            </div>
+
+            
+
+
+    <script>
+        
+        let currentMonth = new Date().getMonth();
+        let currentYear = new Date().getFullYear();
+
+        function toggleMenu(menuId) {
+            var menu = document.getElementById(menuId);
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function renderCalendar() {
+            document.getElementById('month-year').innerText = new Date(currentYear, currentMonth).toLocaleString('default', { month: 'long', year: 'numeric' });
+            let days = new Date(currentYear, currentMonth + 1, 0).getDate();
+            let calendarHTML = '';
+            for (let i = 1; i <= days; i++) {
+                calendarHTML += `<div>${i}</div>`;
+            }
+            document.getElementById('calendar').innerHTML = calendarHTML;
+        }
+
+        function nextMonth() {
+            currentMonth++;
+            renderCalendar();
+        }
+
+        function prevMonth() {
+            currentMonth--;
+            renderCalendar();
+        }
+
+        renderCalendar();
+
+        new Chart(document.getElementById('myChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Sports', 'Sports'],
+                datasets: [{ data: [40, 60], backgroundColor: ['#00aaff', '#ddd'] }]
+            }
+        });
+    </script>
+     <script>
+
+
+
+        // for profile in top bar
+document.getElementById("profileIcon").addEventListener("click", function(event) {
+         event.stopPropagation();
+         let dropdown = document.getElementById("profileDropdown");
+         dropdown.style.display = (dropdown.style.display === "block") ? "none" : "block";
+     });
+
+     document.addEventListener("click", function(event) {
+         let dropdown = document.getElementById("profileDropdown");
+         if (dropdown.style.display === "block" && !event.target.closest(".icon-container")) {
+             dropdown.style.display = "none";
+         }
+     });
+
+
+
+     // for notification
+     document.getElementById("notificationIcon").addEventListener("click", function() {
+     toggleDropdown("notificationDropdown");
+ });
+ 
+ //for email
+ document.getElementById("emailIcon").addEventListener("click", function() {
+     window.location.href = "mailto:admin@example.com";
+ });
+     
+
+       // above 3 function working
+     function toggleDropdown(id) {
+     let dropdown = document.getElementById(id);
+     dropdown.style.display = (dropdown.style.display === "block") ? "none" : "block";
+ }
+ 
+
+     function navigateTo(page) {
+         alert("Navigating to " + page);
+     }
+     function toggleMenu(id, element) {
+             var submenu = document.getElementById(id);
+     
+
+
+
+             // Hide all other submenus
+             var allSubmenus = document.querySelectorAll('.submenu');
+             allSubmenus.forEach(function (menu) {
+                 if (menu !== submenu) {
+                     menu.style.display = 'none';
+                 }
+             });
+             // Toggle current submenu
+             if (submenu.style.display === 'block') {
+                 submenu.style.display = 'none';
+                 element.classList.remove('active');
+             } else {
+                 submenu.style.display = 'block';
+                 element.classList.add('active');
+             }
+         }
+
+     
+ 
+ </script>
+   
+
+</body>
+</html>
+
+    
