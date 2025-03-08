@@ -13,3 +13,5 @@ participation certificates, and track activity points and semester-wise reports.
 system aims to enhance the management efficiency and participation experience for all 
 campus stakeholders by providing a user-friendly and organized platform for campus 
 activities.
+
+python version 3.8
